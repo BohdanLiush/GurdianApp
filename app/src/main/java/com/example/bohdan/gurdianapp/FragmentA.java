@@ -19,8 +19,40 @@ public class FragmentA extends android.support.v4.app.Fragment {
 
     RecyclerView recyclerView;
     public Model model;
-    public String s = "football";
+    public String newsCategory = "";
 
+    static FragmentA newInstance(String newsCategory) {
+        // Base fragment to reuse
+        FragmentA fragment = new FragmentA();
+
+        // Initialize bundle to store arguments
+        Bundle bundle = new Bundle(1);
+
+        // String url parameter to pass arguments when recreating {@link TopStoriesFragment}
+        bundle.putString("tits", newsCategory);
+
+        // Save arguments to the fragment instance to be called upon later
+        fragment.setArguments(bundle);
+
+        // Create and return {@link TopStoriesFragment} with the passed-in string parameter
+        return fragment;
+
+    } static FragmentA newInstanceModel(Model model) {
+        // Base fragment to reuse
+        FragmentA fragment = new FragmentA();
+
+        // Initialize bundle to store arguments
+        Bundle bundle = new Bundle(1);
+
+        // String url parameter to pass arguments when recreating {@link TopStoriesFragment}
+        bundle.putSerializable("tits", model);
+
+        // Save arguments to the fragment instance to be called upon later
+        fragment.setArguments(bundle);
+
+        // Create and return {@link TopStoriesFragment} with the passed-in string parameter
+        return fragment;
+    }
 
     @Nullable
     @Override
@@ -28,21 +60,29 @@ public class FragmentA extends android.support.v4.app.Fragment {
         View rootView = inflater.inflate(
                 R.layout.fragment, container, false);
 
+        Bundle bundle = getArguments();
+        if (bundle!=null){
+            model = (Model) bundle.getSerializable("tits");
+            System.out.println("hello");
+        }
+
+        /** string method */
+        /*if (getArguments() != null) {
+            newsCategory = getArguments().getString("tits");
+        }*/
+
 
         recyclerView = rootView.findViewById(R.id.recycler_view);
 
-
-
-        MainActivity activityHome = (MainActivity) container.getContext();
+       /* MainActivity activityHome = (MainActivity) container.getContext();
         CallbackClass callbacks = new CallbackClass();
         callbacks.registerCallBack(activityHome);
-
         try {
-            model = callbacks.loadObject(s);
+            model = callbacks.loadObject(newsCategory);
             System.out.println("sisku");
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }
+        }*/
 
         RecyclerViewAdapter recyclerViewAdapter = new RecyclerViewAdapter(model.getResponse().getResults());
         LinearLayoutManager layoutManager = new LinearLayoutManager(container.getContext());
@@ -58,10 +98,8 @@ public class FragmentA extends android.support.v4.app.Fragment {
                 CallbackClass callbacks = new CallbackClass();
                 callbacks.registerCallBack(activityHome);
                 callbacks.loadObjectSecondFr(model.getResponse().getResults().get(position).getWebUrl());
-
             }
         }));
-
 
         return rootView;
     }
